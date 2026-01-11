@@ -1,0 +1,52 @@
+#include <Tone.h>  // Include the Tone library
+
+// Define analog pins for the LDRs
+int H = A0;  // First laser (C5)
+int C = A1;  // Second laser (E5)
+int D = A2;  // Third laser (G5)
+
+// Define pin for the speaker
+int SPK = 3;
+
+// Create a Tone object
+Tone tone1;
+
+void setup() {
+  Serial.begin(9600);  // Start serial communication for debugging
+
+  // Set the LDR pins as input
+  pinMode(H, INPUT);
+  pinMode(C, INPUT);
+  pinMode(D, INPUT);
+
+  // Initialize the Tone object
+  tone1.begin(SPK);
+}
+
+void loop() {
+  int nh = analogRead(H);  // Read value from the first laser
+  int nc = analogRead(C);  // Read value from the second laser
+  int nd = analogRead(D);  // Read value from the third laser
+
+  // Serial output to see the analog values (for debugging)
+  Serial.print("H: ");
+  Serial.print(nh);
+  Serial.print(" | C: ");
+  Serial.print(nc);
+  Serial.print(" | D: ");
+  Serial.print(nd);
+  Serial.println();
+
+  // Check if the laser beam is interrupted (value below 1000)
+  if (nh < 1000) {
+    tone1.play(523);  // Play C5 continuously when Laser 1 is interrupted
+  } else if (nc < 1000) {
+    tone1.play(659);  // Play E5 continuously when Laser 2 is interrupted
+  } else if (nd < 1000) {
+    tone1.play(784);  // Play G5 continuously when Laser 3 is interrupted
+  } else {
+    tone1.stop();  // Stop the tone if no laser beam is interrupted
+  }
+
+  delay(50);  // Short delay to allow for more frequent checking and readable serial output
+}
